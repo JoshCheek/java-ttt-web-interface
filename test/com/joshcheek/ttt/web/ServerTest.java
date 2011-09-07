@@ -1,6 +1,7 @@
 package com.joshcheek.ttt.web;
 
 import com.joshcheek.server.HTTPInteraction;
+import com.joshcheek.ttt.library.Game;
 
 import java.io.IOException;
 
@@ -15,17 +16,31 @@ import static com.joshcheek.ttt.web.TestHelpers.*;
  */
 public class ServerTest extends junit.framework.TestCase {
     private String response;
+    private Game game;
 
     // given i go to the homepage then i should be prompted to go first or second
-    public void testGivenIGoToTheHomepageThenIShouldBePromptedToGoFirstOrSecond() throws IOException {
+    public void testGivenIGoToTheHomepageThenIAmPromptedToGoFirstOrSecond() throws IOException {
         visit("/");
         assertContains(response, "<a href='first'>first</a>");
         assertContains(response, "<a href='second'>second</a>");
     }
 
-    // given i have been prompted to go first or second when i click first then i should be presented with an empty board
+    public void testWhenIgoFirstIAmPromptedWithAnEmptyBoard() throws IOException {
+        visit("/first");
+        assertEquals("000000000", game.board());
+        assertContains(response, "<div id='game'>");
+    }
 
-        // given i have been prompted to go first or second when i click second i should be presented with a board that has 1 x on it
+    public void testWhenIgoSecondIAmPromptedWithABoardThatPlayer1HasMovedOn() throws IOException {
+        visit("/second");
+        int move = game.board().indexOf('1');
+        assertTrue(-1 != move);
+        String boardWithoutMove = game.board().substring(0, move) + game.board().substring(move+1);
+        assertEquals("00000000", boardWithoutMove);
+        assertContains(response, "<div id='game'>");
+    }
+
+//    public void testWhenIHave100000000
 
         // given i have a board with one x in the upper left corner, when i render the board i should see a game with no link in the upper left corner
 
@@ -37,9 +52,10 @@ public class ServerTest extends junit.framework.TestCase {
 
     private void visit(String uri) throws IOException {
         String request = "GET " + uri + " HTTP/1.1\r\n\r\n";
-        Server server = getServer();
+        TTTServer server = getServer();
         HTTPInteraction interaction = getInteractionFor(request);
         server.respondTo(interaction.requestMethod(), interaction.requestUri(), interaction);
+        game = server.getLastGame();
         response = interaction.getContent();
     }
 

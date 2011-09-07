@@ -17,6 +17,7 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="library" name="TTTLibrary" level="project" />
     <annotation-paths>
       <root url="file://$MODULE_DIR$/../../jars" />
     </annotation-paths>

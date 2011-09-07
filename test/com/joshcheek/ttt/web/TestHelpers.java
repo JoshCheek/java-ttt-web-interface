@@ -33,8 +33,8 @@ public class TestHelpers {
                 haystack.contains(needle));
     }
 
-    public static Server getServer() {
-        return new Server(DEFAULT_PORT);
+    public static TTTServer getServer() {
+        return new TTTServer(DEFAULT_PORT);
     }
 
 }
