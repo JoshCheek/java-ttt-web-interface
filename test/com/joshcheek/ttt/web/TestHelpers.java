@@ -5,6 +5,7 @@ import com.joshcheek.server.HTTPInteraction;
 import java.io.*;
 
 import static junit.framework.Assert.assertTrue;
+import static org.junit.Assert.assertFalse;
 
 /**
  * Created by IntelliJ IDEA.
@@ -32,6 +33,12 @@ public class TestHelpers {
         assertTrue("Expected \"" + haystack + "\" to contain \"" + needle + "\"",
                 haystack.contains(needle));
     }
+
+    public static void assertDoesntContain(String haystack, String needle) {
+        assertFalse("Expected \"" + haystack + "\" to NOT contain \"" + needle + "\"",
+                haystack.contains(needle));
+    }
+
 
     public static TTTServer getServer() {
         return new TTTServer(DEFAULT_PORT);

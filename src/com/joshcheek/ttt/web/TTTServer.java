@@ -15,10 +15,23 @@ import java.io.IOException;
  */
 public class TTTServer extends WebFramework {
 
+    public static String htmlForBoard(Game game) {
+        String toReturn = "<div id='game'>";
+        for(int i=1; i<=9; ++i)
+            toReturn += htmlForCell(game, i);
+        return toReturn + "</div>";
+    }
+
+    private static String htmlForCell(Game game, int cell) {
+        if(game.isAvailable(cell))
+            return "<div id='cell" + cell + "'><a href='/" + game.pristineMove(cell).board() + "'>move</a></div>";
+        return "<div id='cell" + cell + "'></div>";
+    }
+
     private Game lastGame;
 
     public static void main(String[] args) throws IOException {
-        TTTServer server = new TTTServer(8080);
+        TTTServer server = new TTTServer(8082);
         server.startRunning();
     }
 
@@ -30,10 +43,6 @@ public class TTTServer extends WebFramework {
         return lastGame;
     }
 
-    public String renderBoard(Game game) {
-        return "<div id='game'>";
-    }
-
     public void defineRoutes() {
         new GetRequest("/") {
             public String controller() {
@@ -43,7 +52,7 @@ public class TTTServer extends WebFramework {
 
         new GetRequest("/first") {
             public String controller() {
-                return renderBoard(lastGame = new Game());
+                return htmlForBoard(lastGame = new Game());
             }
         };
 
@@ -51,7 +60,16 @@ public class TTTServer extends WebFramework {
             public String controller() {
                 Game game = lastGame = new Game();
                 new ComputerPlayer(game).takeTurn();
-                return renderBoard(game);
+                return htmlForBoard(game);
+            }
+        };
+
+        new GetRequest("/:board") {
+            public String controller() {
+                Game game = lastGame = new Game(getParam("board"));
+                ComputerPlayer comp = new ComputerPlayer(game);
+                if(!game.isOver()) comp.takeTurn();
+                return htmlForBoard(game);
             }
         };
     }

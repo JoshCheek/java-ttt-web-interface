@@ -40,15 +40,47 @@ public class ServerTest extends junit.framework.TestCase {
         assertContains(response, "<div id='game'>");
     }
 
-//    public void testWhenIHave100000000
+    public void testTheBoard100000000RendersWithNoLinkInUpperLeft() throws IOException {
+        Game game = new Game("100000000");
+        String rendered = TTTServer.htmlForBoard(game);
+        assertDoesntContain(rendered, "href='/200000000'");
+        assertContains(rendered, "href='/120000000'");
+        assertContains(rendered, "href='/102000000'");
+        assertContains(rendered, "href='/100200000'");
+        assertContains(rendered, "href='/100020000'");
+        assertContains(rendered, "href='/100002000'");
+        assertContains(rendered, "href='/100000200'");
+        assertContains(rendered, "href='/100000020'");
+        assertContains(rendered, "href='/100000002'");
 
-        // given i have a board with one x in the upper left corner, when i render the board i should see a game with no link in the upper left corner
+    }
 
-        // given i have a board with nothing clicked and i click a square, it should be filled in and so should the computer's move
+    public void testGivenIHaveABoardWithNothingClickedWhenIClickASquareThenItShouldBeFilledInAndSoShouldTheComputersMove() throws IOException {
+        visit("/100000000");
+        assertEquals("100020000", game.board());
+        assertContains(response, "href='/110020000'");
+        assertContains(response, "href='/101020000'");
+        assertContains(response, "href='/100120000'");
+        assertContains(response, "href='/100021000'");
+        assertContains(response, "href='/100020100'");
+        assertContains(response, "href='/100020010'");
+        assertContains(response, "href='/100020001'");
+        assertDoesntContain(response, "href='/100010000'");
+        assertDoesntContain(response, "href='/100020000'");
+    }
 
-        // given the computer wins the game then the game should be over
+    public void testCompletedGamesRenderWithNoMoves() {
+        assertNoMovesFor("111220000"); // player1 wins
+        assertNoMovesFor("112221210"); // player2 wins
+        assertNoMovesFor("112221121"); // tie game
+    }
 
-        // given the game is over then there should be nowhere for me to move and there should be a link to play again and when i click it i should be taken to the homepage
+    public void testWhenGameIsOverThereIsALinkBackToTheHompage() throws IOException {
+        visit("/112221121");
+        assertDoesntContain(response, "href='/'");
+    }
+
+
 
     private void visit(String uri) throws IOException {
         String request = "GET " + uri + " HTTP/1.1\r\n\r\n";
@@ -58,5 +90,12 @@ public class ServerTest extends junit.framework.TestCase {
         game = server.getLastGame();
         response = interaction.getContent();
     }
+
+    private void assertNoMovesFor(String board) {
+        Game game = new Game(board);
+        String rendered = TTTServer.htmlForBoard(game);
+        assertDoesntContain(rendered, "href");
+    }
+
 
 }
