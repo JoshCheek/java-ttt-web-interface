@@ -26,6 +26,14 @@ public class TTTServer extends WebFramework {
         super(port);
     }
 
+    public Game getLastGame() {
+        return lastGame;
+    }
+
+    public String renderBoard(Game game) {
+        return "<div id='game'>";
+    }
+
     public void defineRoutes() {
         new GetRequest("/") {
             public String controller() {
@@ -35,22 +43,16 @@ public class TTTServer extends WebFramework {
 
         new GetRequest("/first") {
             public String controller() {
-                lastGame = new Game();
-                return "<div id='game'>";
+                return renderBoard(lastGame = new Game());
             }
         };
 
         new GetRequest("/second") {
             public String controller() {
-                lastGame = new Game();
-                new ComputerPlayer(lastGame).takeTurn();
-                return "<div id='game'>";
+                Game game = lastGame = new Game();
+                new ComputerPlayer(game).takeTurn();
+                return renderBoard(game);
             }
         };
-    }
-
-
-    public Game getLastGame() {
-        return lastGame;
     }
 }
