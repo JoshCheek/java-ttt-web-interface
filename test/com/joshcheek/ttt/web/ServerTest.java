@@ -80,6 +80,11 @@ public class ServerTest extends junit.framework.TestCase {
         assertDoesntContain(response, "href='/'");
     }
 
+    public void testItCanAccessItsCSS() throws IOException {
+        visit("/styles.css");
+        assertContains(response, "#game");
+    }
+
 
 
     private void visit(String uri) throws IOException {
