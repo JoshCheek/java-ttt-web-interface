@@ -3,6 +3,8 @@ T(ic) T(ac) T(oe) Web Interface
 
 This is a command line interface to my [Java TTT lib](https://github.com/JoshCheek/java-ttt-library). It uses a [web server]() I wrote. I created it as a practice assignment during my residency at [8th Light](http://www.8thlight.com/). 
 
+![Screenshot](https://github.com/JoshCheek/java-ttt-web-interface/raw/master/ss.png)
+
 MIT License
 -----------
 
